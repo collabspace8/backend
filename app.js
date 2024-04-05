@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const userRoutes = require("./routes/userRoutes");
-const { client, run } = require("./connection");
+const { client, run } = require("./connect");
 const { ObjectId } = require("mongodb");
 
 const app = express();
@@ -17,7 +17,7 @@ app.post("/register", async (req, res) => {
   const formData = req.body;
   try {
     const db = client.db("CollabSpacedb"); // Replace with your database name
-    const collection = db.collection("registration"); // Replace with your collection name
+    const collection = db.collection("Register"); // Replace with your collection name
     const result = await collection.insertOne(formData);
     res.status(201).json(result);
   } catch (error) {
@@ -30,7 +30,7 @@ app.post("/add-property", async (req, res) => {
   // const propertyData = req.body; // Get property data from request body
   const propertyData = { ...req.body, createdAt: new Date() };
   try {
-    const db = client.db("Workspace"); // Adjust with your database name if different
+    const db = client.db("CollabSpacedb"); // Adjust with your database name if different
     const collection = db.collection("Properties"); // Create or specify the collection for properties
     const result = await collection.insertOne(propertyData);
     res.status(201).json({ message: "Property added successfully", result });
@@ -42,7 +42,7 @@ app.post("/add-property", async (req, res) => {
 // API ENDPOINT TO LOAD ALL PROPERTIES IN THE PROPERTY TABLE
 app.get("/properties", async (req, res) => {
   try {
-    const db = client.db("Workspace");
+    const db = client.db("CollabSpacedb");
     const collection = db.collection("Properties");
     const properties = await collection
       .find({})
@@ -58,7 +58,7 @@ app.get("/properties", async (req, res) => {
 app.get("/properties/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const db = client.db("Workspace");
+    const db = client.db("CollabSpacedb");
     const collection = db.collection("Properties");
     const property = await collection.findOne({
       _id: new ObjectId(id),
@@ -81,7 +81,7 @@ app.put("/properties/:id", async (req, res) => {
   const updates = req.body;
 
   try {
-    const db = client.db("Workspace");
+    const db = client.db("CollabSpacedb");
     const collection = db.collection("Properties");
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
@@ -109,7 +109,7 @@ app.delete("/properties/:id", async (req, res) => {
 
   try {
     const _id = new ObjectId(id);
-    const db = client.db("Workspace");
+    const db = client.db("CollabSpacedb");
     const collection = db.collection("Properties");
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
 

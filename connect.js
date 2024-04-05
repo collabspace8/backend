@@ -20,6 +20,7 @@ async function run() {
     return client;
   } catch (e) {
     console.error("Connection to MongoDB failed", e);
+    throw e; // Re-throw the error to handle it outside
   }
 }
 
