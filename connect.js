@@ -15,6 +15,10 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+
+    // Log the MongoDB URI before attempting to connect
+    console.log("MongoDB URI:", uri);
+
     await client.connect();
     console.log("Connected successfully to MongoDB");
     return client;
