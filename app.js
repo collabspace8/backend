@@ -4,6 +4,7 @@ const express = require("express");
 const userRoutes = require("./routes/userRoutes");
 const { client, run } = require("./connect");
 const { ObjectId } = require("mongodb");
+const registrationController = require("./controllers/registrationController");
 
 const app = express();
 const path = require("path");
@@ -24,6 +25,8 @@ app.post("/register", async (req, res) => {
     res.status(500).json({ message: "Failed to register user", error });
   }
 });
+// login
+app.post("/login", registrationController.loginUser);
 
 // API ENDPOINT TO ADD A NEW PROPERTY
 app.post("/add-property", async (req, res) => {
