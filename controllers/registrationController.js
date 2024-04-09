@@ -1,7 +1,14 @@
+const bcrypt = require("bcrypt");
 const { client } = require("../connect");
+
+// Registration
 exports.createUser = async (req, res) => {
   try {
+    // Extract user data from request body
     const { fullname, phone, email, role, username, password } = req.body;
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = {
       fullname,
@@ -9,7 +16,7 @@ exports.createUser = async (req, res) => {
       email,
       role,
       username,
-      password, // Store the plaintext password (not secure)
+      password: hashedPassword, // Store the hashed password
     };
 
     const db = client.db("CollabSpacedb");
@@ -26,39 +33,27 @@ exports.createUser = async (req, res) => {
   }
 };
 
-//login
+// Login
 exports.loginUser = async (req, res) => {
   const { username, password } = req.body;
 
-  console.log("Attempting login with:", username, password);
+  const db = client.db("CollabSpacedb");
+  const collection = db.collection("Register");
 
   try {
-    // Define db and collection again for this function's scope
-    const db = client.db("CollabSpacedb");
-    const collection = db.collection("Register");
-
     const user = await collection.findOne({ username });
-    console.log("User found in database:", user);
 
-    if (!user) {
-      console.log("No user found for username:", username);
-      return res.status(401).json({ message: "Invalid username or password." });
-    }
-
-    if (password === user.password) {
-      console.log("Passwords match, login successful.");
+    if (user && (await bcrypt.compare(password, user.password))) {
+      // Passwords match
       const { password, ...userWithoutPassword } = user;
-      return res
+      res
         .status(200)
         .json({ message: "Login successful", user: userWithoutPassword });
     } else {
-      console.log("Passwords do not match.");
-      return res.status(401).json({ message: "Invalid username or password." });
+      // Authentication failed
+      res.status(401).json({ message: "Authentication failed" });
     }
   } catch (error) {
-    console.error("Login error:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

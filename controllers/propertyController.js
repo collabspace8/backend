@@ -8,7 +8,6 @@ exports.addProperty = async (req, res) => {
 
     // Create a new property object
     const newProperty = {
-      propertyID,
       address,
       neighborhood,
       squarefeet,
