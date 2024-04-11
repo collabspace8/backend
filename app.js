@@ -149,6 +149,27 @@ app.post("/add-workspace", async (req, res) => {
   }
 });
 
+// API ENDPOINT THAT FETCHES A SINGLE WORKSPACE BY _ID
+app.get("/workspaces/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const db = client.db("CollabSpacedb");
+    const collection = db.collection("Workspaces");
+    const workspace = await collection.findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!workspace) {
+      return res.status(404).json({ message: "Workspace not found" });
+    }
+
+    res.status(200).json(workspace);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch workspace", error });
+  }
+});
+
 
 // API ENDPOINT TO UPDATE A WORKSPACE
 app.put("/workspaces/:id", async (req, res) => {

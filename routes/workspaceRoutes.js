@@ -7,5 +7,6 @@ const workspaceController = require('../controllers/workspaceController');
 router.post('/', workspaceController.createWorkspace);
 router.put('/:id', workspaceController.updateWorkspace);
 router.delete('/:id', workspaceController.deleteWorkspace);
+router.get("/:id", workspaceController.getWorkspaceById);
 
 module.exports = router;
